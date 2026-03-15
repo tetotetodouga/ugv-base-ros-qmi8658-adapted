@@ -1,4 +1,3 @@
-# ugv-base-ros-qmi8658-adapted
 # UGV Base ROS QMI8658 Adapted
 
 Adapted ESP32 lower-controller firmware for the Waveshare General Driver for Robots.
