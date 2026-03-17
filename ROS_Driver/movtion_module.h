@@ -325,8 +325,10 @@ void setPID(float inputP, float inputI, float inputD, float inputLimits) {
 }
 
 void rosCtrl(float rosX, float rosZ) {
-  setpointA = rosX - (rosZ * TRACK_WIDTH / 2.0);
-  setpointB = rosX + (rosZ * TRACK_WIDTH / 2.0);
+  rosZ = -rosZ;
+  float half_track = TRACK_WIDTH / 2.0f;
+  setpointA = -(rosX - (rosZ * half_track));
+  setpointB = -(rosX + (rosZ * half_track));
   setGoalSpeed(setpointA, setpointB);
 }
 
@@ -374,7 +376,7 @@ void mm_settings(byte inputMain, byte inputModule) {
     WHEEL_D = 0.0800;
     ONE_CIRCLE_PLUSES = 660;
     TRACK_WIDTH = 0.172;
-    SET_MOTOR_DIR = false;
+    SET_MOTOR_DIR = true;
   } else if (mainType == 3) {
     WHEEL_D = 0.0523;
     ONE_CIRCLE_PLUSES = 1092;
