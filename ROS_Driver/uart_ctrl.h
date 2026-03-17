@@ -1,121 +1,137 @@
-void jsonCmdReceiveHandler(){
-	int cmdType = jsonCmdReceive["T"].as<int>();
-	switch(cmdType){
-	// emergency stop.
-	case CMD_EMERGENCY_STOP:
-												emergencyStopProcessing();
-  											setGoalSpeed(0, 0);
-												break;
-	case CMD_SPEED_CTRL:	if (jsonCmdReceive.containsKey("T") &&
-														jsonCmdReceive.containsKey("L") &&
-														jsonCmdReceive.containsKey("R")){
-													if (jsonCmdReceive["L"].is<float>() &&
-															jsonCmdReceive["R"].is<float>()){
-														heartbeatStopFlag = false;
-														lastCmdRecvTime = millis();
-														setGoalSpeed(
-														jsonCmdReceive["L"],
-														jsonCmdReceive["R"]);
-													}
-												} break;
-	case CMD_PWM_INPUT:		usePIDCompute = false;
-												heartbeatStopFlag = false;
-												lastCmdRecvTime = millis();
-												leftCtrl(jsonCmdReceive["L"]);
-												rightCtrl(jsonCmdReceive["R"]);
-												break;
-	case CMD_ROS_CTRL:		rosCtrl(
-												jsonCmdReceive["X"],
-												jsonCmdReceive["Z"]);break;
-	case CMD_SET_MOTOR_PID:
-												setPID(
-												jsonCmdReceive["P"],
-												jsonCmdReceive["I"],
-												jsonCmdReceive["D"],
-												jsonCmdReceive["L"]);break;
-	case CMD_OLED_CTRL:		oledCtrl(
-												jsonCmdReceive["lineNum"],
-												jsonCmdReceive["Text"]);break;
-	case CMD_OLED_DEFAULT:setOledDefault();break;
-	case CMD_MODULE_TYPE:	changeModuleType(
-												jsonCmdReceive["cmd"]);break;
+void jsonCmdReceiveHandler() {
+  int cmdType = jsonCmdReceive["T"].as<int>();
 
+  switch(cmdType) {
+    // emergency stop.
+    case CMD_EMERGENCY_STOP:
+      emergencyStopProcessing();
+      setGoalSpeed(0, 0);
+      break;
 
+    case CMD_SPEED_CTRL:
+  if (jsonCmdReceive.containsKey("T") &&
+      jsonCmdReceive.containsKey("L") &&
+      jsonCmdReceive.containsKey("R")) {
+    if (jsonCmdReceive["L"].is<float>() && jsonCmdReceive["R"].is<float>()) {
+      heartbeatStopFlag = false;
+      lastCmdRecvTime = millis();
 
-	case CMD_GET_IMU_DATA:
-												getIMUData();break;
-	case CMD_CALI_IMU_STEP:
-												imuCalibration();break;
-	case CMD_GET_IMU_OFFSET:
-												getIMUOffset();
-												break;
-	case CMD_SET_IMU_OFFSET:
-												setIMUOffset(
-												jsonCmdReceive["gx"],
-												jsonCmdReceive["gy"],
-												jsonCmdReceive["gz"],
-                        jsonCmdReceive["ax"],
-												jsonCmdReceive["ay"],
-												jsonCmdReceive["az"],
-                        jsonCmdReceive["cx"],
-												jsonCmdReceive["cy"],
-												jsonCmdReceive["cz"]);break;
-	case CMD_BASE_FEEDBACK:
-												baseInfoFeedback();break;
-	case CMD_BASE_FEEDBACK_FLOW:
-												setBaseInfoFeedbackMode(
-												jsonCmdReceive["cmd"]);break;
-	case CMD_FEEDBACK_FLOW_INTERVAL:
-												setFeedbackFlowInterval(
-												jsonCmdReceive["cmd"]);break;
-	case CMD_UART_ECHO_MODE:
-												setCmdEcho(
-												jsonCmdReceive["cmd"]);break;
-	case CMD_ARM_CTRL_UI: RoArmM2_uiCtrl(
-												jsonCmdReceive["E"],
-												jsonCmdReceive["Z"],
-												jsonCmdReceive["R"]
-												);break;
-                        
+      setGoalSpeed(
+        jsonCmdReceive["L"].as<float>(),
+        jsonCmdReceive["R"].as<float>()
+      );
+    }
+  }
+  break;
 
+case CMD_PWM_INPUT:
+  usePIDCompute = false;
+  heartbeatStopFlag = false;
+  lastCmdRecvTime = millis();
 
-	case CMD_LED_CTRL:		led_pwm_ctrl(
-												jsonCmdReceive["IO4"],
-												jsonCmdReceive["IO5"]);break;
-	case CMD_GIMBAL_CTRL_SIMPLE:
-												gimbalCtrlSimple(
-												jsonCmdReceive["X"],
-												jsonCmdReceive["Y"],
-												jsonCmdReceive["SPD"],
-												jsonCmdReceive["ACC"]);break;
-	case CMD_GIMBAL_CTRL_MOVE:
-												gimbalCtrlMove(
-												jsonCmdReceive["X"],
-												jsonCmdReceive["Y"],
-												jsonCmdReceive["SX"],
-												jsonCmdReceive["SY"]);break;
-	case CMD_GIMBAL_CTRL_STOP:
-												gimbalCtrlStop();break;
-	case CMD_HEART_BEAT_SET:
-												changeHeartBeatDelay(
-												jsonCmdReceive["cmd"]);break;
-	case CMD_GIMBAL_STEADY:
-												gimbalSteadySet(
-												jsonCmdReceive["s"],
-												jsonCmdReceive["y"]);break;
-	case CMD_SET_SPD_RATE:
-												setSpdRate(
-												jsonCmdReceive["L"],
-												jsonCmdReceive["R"]);break;
-	case CMD_GET_SPD_RATE:
-												getSpdRate();break;
-	case CMD_SAVE_SPD_RATE:
-												saveSpdRate();break;
-	case CMD_GIMBAL_USER_CTRL:
-												gimbalUserCtrl(
-												jsonCmdReceive["X"],
-												jsonCmdReceive["Y"],
-												jsonCmdReceive["SPD"]);break;
+  leftCtrl(jsonCmdReceive["L"].as<float>());
+  rightCtrl(jsonCmdReceive["R"].as<float>());
+  break;
+
+    case CMD_ROS_CTRL:
+      rosCtrl(jsonCmdReceive["X"], jsonCmdReceive["Z"]);
+      break;
+
+    case CMD_SET_MOTOR_PID:
+      setPID(jsonCmdReceive["P"], jsonCmdReceive["I"], jsonCmdReceive["D"], jsonCmdReceive["L"]);
+      break;
+
+    case CMD_OLED_CTRL:
+      oledCtrl(jsonCmdReceive["lineNum"], jsonCmdReceive["Text"]);
+      break;
+
+    case CMD_OLED_DEFAULT:
+      setOledDefault();
+      break;
+
+    case CMD_MODULE_TYPE:
+      changeModuleType(jsonCmdReceive["cmd"]);
+      break;
+
+    case CMD_GET_IMU_DATA:
+      getIMUData();
+      break;
+
+    case CMD_CALI_IMU_STEP:
+      imuCalibration();
+      break;
+
+    case CMD_GET_IMU_OFFSET:
+      getIMUOffset();
+      break;
+
+    case CMD_SET_IMU_OFFSET:
+      setIMUOffset(
+        jsonCmdReceive["gx"], jsonCmdReceive["gy"], jsonCmdReceive["gz"],
+        jsonCmdReceive["ax"], jsonCmdReceive["ay"], jsonCmdReceive["az"],
+        jsonCmdReceive["cx"], jsonCmdReceive["cy"], jsonCmdReceive["cz"]
+      );
+      break;
+
+    case CMD_BASE_FEEDBACK:
+      baseInfoFeedback();
+      break;
+
+    case CMD_BASE_FEEDBACK_FLOW:
+      setBaseInfoFeedbackMode(jsonCmdReceive["cmd"]);
+      break;
+
+    case CMD_FEEDBACK_FLOW_INTERVAL:
+      setFeedbackFlowInterval(jsonCmdReceive["cmd"]);
+      break;
+
+    case CMD_UART_ECHO_MODE:
+      setCmdEcho(jsonCmdReceive["cmd"]);
+      break;
+
+    case CMD_ARM_CTRL_UI:
+      RoArmM2_uiCtrl(jsonCmdReceive["E"], jsonCmdReceive["Z"], jsonCmdReceive["R"]);
+      break;
+
+    case CMD_LED_CTRL:
+      led_pwm_ctrl(jsonCmdReceive["IO4"], jsonCmdReceive["IO5"]);
+      break;
+
+    case CMD_GIMBAL_CTRL_SIMPLE:
+      gimbalCtrlSimple(jsonCmdReceive["X"], jsonCmdReceive["Y"], jsonCmdReceive["SPD"], jsonCmdReceive["ACC"]);
+      break;
+
+    case CMD_GIMBAL_CTRL_MOVE:
+      gimbalCtrlMove(jsonCmdReceive["X"], jsonCmdReceive["Y"], jsonCmdReceive["SX"], jsonCmdReceive["SY"]);
+      break;
+
+    case CMD_GIMBAL_CTRL_STOP:
+      gimbalCtrlStop();
+      break;
+
+    case CMD_HEART_BEAT_SET:
+      changeHeartBeatDelay(jsonCmdReceive["cmd"]);
+      break;
+
+    case CMD_GIMBAL_STEADY:
+      gimbalSteadySet(jsonCmdReceive["s"], jsonCmdReceive["y"]);
+      break;
+
+    case CMD_SET_SPD_RATE:
+      setSpdRate(jsonCmdReceive["L"], jsonCmdReceive["R"]);
+      break;
+
+    case CMD_GET_SPD_RATE:
+      getSpdRate();
+      break;
+
+    case CMD_SAVE_SPD_RATE:
+      saveSpdRate();
+      break;
+
+    case CMD_GIMBAL_USER_CTRL:
+      gimbalUserCtrl(jsonCmdReceive["X"], jsonCmdReceive["Y"], jsonCmdReceive["SPD"]);
+      break;
 
 
 
